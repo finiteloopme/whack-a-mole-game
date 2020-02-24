@@ -1,0 +1,47 @@
+/**
+* kunall@
+* 24-Feb-3020
+*
+* Compile the protobuf:
+* protoc -I ./mole --go_out=plugins=grpc:./mole ./mole/mole.proto 
+*/
+
+syntax = "proto3";
+package mole;
+
+import "google/protobuf/timestamp.proto";
+
+service Mole{
+	rpc GetMoles(stream MoleFromClient) returns (stream MoleFromServer);
+}
+
+// Screen dimension in the fourth quadrant
+// X: +ve & Y: -ve
+message ScreenDimension{
+	int32	height	= 1;
+	int32	width	= 2;
+}
+
+enum ClientScore{
+	MOLE_BONKED	= 0;
+	MOLE_MISSED	= 1;
+	EMPTY_HIT	= 2;
+}
+
+message MoleFromClient{
+	ClientScore
+		score			= 1;
+	google.protobuf.Timestamp	displayedOnScreen	= 2;
+	google.protobuf.Timestamp	actionedByUser		= 3;
+	ScreenDimension
+		screen			= 4;
+}
+
+message MoleFromServer{
+	string	img 	= 1;
+	int32	xPos 	= 2;
+	int32	yPos 	= 3;
+	//Peep time in milli seconds
+	int64	popUp	= 4;
+	google.protobuf.Timestamp	serverSideCreation = 5;
+}
